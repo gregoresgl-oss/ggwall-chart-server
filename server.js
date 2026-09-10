@@ -21,10 +21,10 @@ app.use(express.json());
 // Default indicators per period (matches telegram-bot.ts logic)
 function getDefaultIndicators(period) {
   switch (period) {
-    case '4h':  return ['alerts'];
-    case '24h': return ['ma7', 'alerts'];
-    case '7d':  return ['ma7', 'ma25', 'alerts'];
-    case '30d': return ['ma7', 'ma25', 'rsi', 'alerts'];
+    case '4h':  return [];
+    case '24h': return ['ma7'];
+    case '7d':  return ['ma7', 'ma25', 'rsi'];
+    case '30d': return ['ma7', 'ma25', 'rsi'];
     case '90d': return ['ma7', 'ma25', 'rsi'];
     default:    return ['ma7'];
   }

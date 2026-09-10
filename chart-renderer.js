@@ -181,7 +181,7 @@ function buildChartHTML(candles, indicatorData, meta) {
       ${indicators.includes('ma7')    ? `<span class="ind-ma7">MA7: <span id="ma7-val">---</span></span>` : ''}
       ${indicators.includes('ma25')   ? `<span class="ind-ma25">MA25: <span id="ma25-val">---</span></span>` : ''}
 
-      ${indicators.includes('alerts') ? `<span class="ind-alert">Alert: +5% / -5%</span>` : ''}
+
     </div>
   </div>
   <div id="current-price">${formatPrice(currentPrice)}</div>
@@ -226,17 +226,7 @@ function buildChartHTML(candles, indicatorData, meta) {
     <span class="legend-label">RSI(14)</span>
     <span class="legend-desc">— Momentum (70=overbought, 30=oversold)</span>
   </div>` : ''}
-  ${indicators.includes('alerts') ? `
-  <div class="legend-item">
-    <div class="legend-dot-dashed" style="border-color:${COLORS.green};"></div>
-    <span class="legend-label">+5%</span>
-    <span class="legend-desc">— Alert up</span>
-  </div>
-  <div class="legend-item">
-    <div class="legend-dot-dashed" style="border-color:${COLORS.red};"></div>
-    <span class="legend-label">-5%</span>
-    <span class="legend-desc">— Alert down</span>
-  </div>` : ''}
+
 </div>
 
 <!-- Branding -->
@@ -316,22 +306,7 @@ function buildChartHTML(candles, indicatorData, meta) {
 
   // BB removed — too many dashed lines on chart
 
-  // Alert +5% (green dotted)
-  if (alertUpData.length > 0) {
-    const alertUp = candleChart.addLineSeries({
-      color: '${COLORS.green}', lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Dotted,
-      crosshairMarkerVisible: false,
-    });
-    alertUp.setData(alertUpData);
 
-    const alertDown = candleChart.addLineSeries({
-      color: '${COLORS.red}', lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Dotted,
-      crosshairMarkerVisible: false,
-    });
-    alertDown.setData(alertDownData);
-  }
 
   // ── Volume Chart ──
   let volumeChart = null;
