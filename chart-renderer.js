@@ -76,7 +76,7 @@ function buildChartHTML(candles, indicatorData, meta) {
   body {
     background: ${COLORS.bg};
     font-family: 'Courier New', monospace;
-    width: 800px;
+    width: 1200px;
     overflow: hidden;
   }
 
@@ -99,9 +99,9 @@ function buildChartHTML(candles, indicatorData, meta) {
 
   /* ── Charts ── */
   #charts { position: relative; }
-  #candlestick-chart { width: 800px; height: ${candleHeight}px; }
-  #volume-chart      { width: 800px; height: ${volumeHeight}px; ${showVolume ? '' : 'display:none;'} }
-  #rsi-chart         { width: 800px; height: ${rsiHeight}px;    ${showRSI   ? '' : 'display:none;'} }
+  #candlestick-chart { width: 1200px; height: ${candleHeight}px; }
+  #volume-chart      { width: 1200px; height: ${volumeHeight}px; ${showVolume ? '' : 'display:none;'} }
+  #rsi-chart         { width: 1200px; height: ${rsiHeight}px;    ${showRSI   ? '' : 'display:none;'} }
 
   /* Panel labels */
   .panel-label {
@@ -222,7 +222,7 @@ function buildChartHTML(candles, indicatorData, meta) {
   // ── Candlestick Chart ──
   const candleChart = LightweightCharts.createChart(document.getElementById('candlestick-chart'), {
     ...commonOpts,
-    width: 800,
+    width: 1200,
     height: ${candleHeight},
     timeScale: { borderColor: '${COLORS.border}', visible: ${!showVolume && !showRSI} },
   });
@@ -294,7 +294,7 @@ function buildChartHTML(candles, indicatorData, meta) {
   if (showVolume) {
     volumeChart = LightweightCharts.createChart(document.getElementById('volume-chart'), {
       ...commonOpts,
-      width: 800,
+      width: 1200,
       height: ${volumeHeight},
       timeScale: { borderColor: '${COLORS.border}', visible: !showRSI },
     });
@@ -307,7 +307,7 @@ function buildChartHTML(candles, indicatorData, meta) {
   if (showRSI) {
     rsiChart = LightweightCharts.createChart(document.getElementById('rsi-chart'), {
       ...commonOpts,
-      width: 800,
+      width: 1200,
       height: ${rsiHeight},
       rightPriceScale: {
         borderColor: '${COLORS.border}',
@@ -382,7 +382,7 @@ async function renderChart(candles, indicatorData, meta) {
     });
 
     const page = await browser.newPage();
-    await page.setViewport({ width: 800, height: 1000, deviceScaleFactor: 1 });
+    await page.setViewport({ width: 1200, height: 1000, deviceScaleFactor: 1 });
 
     // Load HTML content
     await page.setContent(html, { waitUntil: 'networkidle0', timeout: 30000 });
