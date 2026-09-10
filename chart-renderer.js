@@ -180,7 +180,7 @@ function buildChartHTML(candles, indicatorData, meta) {
     <div id="indicators-row">
       ${indicators.includes('ma7')    ? `<span class="ind-ma7">MA7: <span id="ma7-val">---</span></span>` : ''}
       ${indicators.includes('ma25')   ? `<span class="ind-ma25">MA25: <span id="ma25-val">---</span></span>` : ''}
-      ${indicators.includes('bb')     ? `<span class="ind-bb">BB(20,2)</span>` : ''}
+
       ${indicators.includes('alerts') ? `<span class="ind-alert">Alert: +5% / -5%</span>` : ''}
     </div>
   </div>
@@ -219,12 +219,7 @@ function buildChartHTML(candles, indicatorData, meta) {
     <span class="legend-label">MA25</span>
     <span class="legend-desc">— Mid-term trend</span>
   </div>` : ''}
-  ${indicators.includes('bb') ? `
-  <div class="legend-item">
-    <div class="legend-dot-dashed" style="border-color:${COLORS.bb};"></div>
-    <span class="legend-label">BB(20,2)</span>
-    <span class="legend-desc">— Volatility range</span>
-  </div>` : ''}
+
   ${indicators.includes('rsi') ? `
   <div class="legend-item">
     <div class="legend-dot" style="background:${COLORS.rsi};"></div>
@@ -319,20 +314,7 @@ function buildChartHTML(candles, indicatorData, meta) {
     if (el) el.textContent = lastMA25.value.toFixed(4);
   }
 
-  // Bollinger Bands (purple dashed)
-  if (bbUpperData.length > 0) {
-    const bbUpper = candleChart.addLineSeries({
-      color: '${COLORS.bb}', lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Dashed,
-    });
-    bbUpper.setData(bbUpperData);
-
-    const bbLower = candleChart.addLineSeries({
-      color: '${COLORS.bb}', lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Dashed,
-    });
-    bbLower.setData(bbLowerData);
-  }
+  // BB removed — too many dashed lines on chart
 
   // Alert +5% (green dotted)
   if (alertUpData.length > 0) {
