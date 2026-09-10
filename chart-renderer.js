@@ -38,9 +38,9 @@ function buildChartHTML(candles, indicatorData, meta) {
   const showRSI    = indicators.includes('rsi') && indicatorData.rsi?.length > 0;
 
   // Chart heights
-  const candleHeight = 300;
-  const volumeHeight = showVolume ? 90  : 0;
-  const rsiHeight    = showRSI   ? 90  : 0;
+  const candleHeight = 420;
+  const volumeHeight = showVolume ? 100 : 0;
+  const rsiHeight    = showRSI   ? 100 : 0;
   const totalHeight  = candleHeight + volumeHeight + rsiHeight + 120; // +120 for header/footer
 
   // Serialize data for injection into the HTML
@@ -129,12 +129,35 @@ function buildChartHTML(candles, indicatorData, meta) {
   #footer .val { color: ${COLORS.textLight}; font-weight: bold; }
   #footer .change { color: ${changeColor}; font-weight: bold; }
 
+  /* ── Legend ── */
+  #legend {
+    background: ${COLORS.bgPanel};
+    padding: 7px 14px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 10px;
+    color: ${COLORS.text};
+    border-top: 1px solid rgba(255,255,255,0.04);
+    flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot {
+    width: 20px; height: 3px; border-radius: 2px;
+  }
+  .legend-dot-dashed {
+    width: 20px; height: 0px;
+    border-top: 2px dashed;
+  }
+  .legend-label { color: ${COLORS.textLight}; }
+  .legend-desc  { color: ${COLORS.text}; }
+
   /* ── Branding ── */
   #branding {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 14px 8px;
+    padding: 5px 14px 7px;
     font-size: 10px;
     color: #555;
   }
@@ -180,6 +203,45 @@ function buildChartHTML(candles, indicatorData, meta) {
   <span>L: <span class="val">${formatPrice(lastCandle.low)}</span></span>
   <span>C: <span class="val">${formatPrice(lastCandle.close)}</span></span>
   <span class="change">${changeSign}${priceChange}%</span>
+</div>
+
+<!-- Legend -->
+<div id="legend">
+  ${indicators.includes('ma7') ? `
+  <div class="legend-item">
+    <div class="legend-dot" style="background:${COLORS.ma7};"></div>
+    <span class="legend-label">MA7</span>
+    <span class="legend-desc">— Short-term trend</span>
+  </div>` : ''}
+  ${indicators.includes('ma25') ? `
+  <div class="legend-item">
+    <div class="legend-dot" style="background:${COLORS.ma25};"></div>
+    <span class="legend-label">MA25</span>
+    <span class="legend-desc">— Mid-term trend</span>
+  </div>` : ''}
+  ${indicators.includes('bb') ? `
+  <div class="legend-item">
+    <div class="legend-dot-dashed" style="border-color:${COLORS.bb};"></div>
+    <span class="legend-label">BB(20,2)</span>
+    <span class="legend-desc">— Volatility range</span>
+  </div>` : ''}
+  ${indicators.includes('rsi') ? `
+  <div class="legend-item">
+    <div class="legend-dot" style="background:${COLORS.rsi};"></div>
+    <span class="legend-label">RSI(14)</span>
+    <span class="legend-desc">— Momentum (70=overbought, 30=oversold)</span>
+  </div>` : ''}
+  ${indicators.includes('alerts') ? `
+  <div class="legend-item">
+    <div class="legend-dot-dashed" style="border-color:${COLORS.green};"></div>
+    <span class="legend-label">+5%</span>
+    <span class="legend-desc">— Alert up</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot-dashed" style="border-color:${COLORS.red};"></div>
+    <span class="legend-label">-5%</span>
+    <span class="legend-desc">— Alert down</span>
+  </div>` : ''}
 </div>
 
 <!-- Branding -->
