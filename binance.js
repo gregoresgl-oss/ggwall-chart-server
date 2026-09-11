@@ -1,6 +1,7 @@
 /**
  * binance.js
  * Fetches OHLC candlestick data from Binance API (free, no API key needed)
+ * Falls back to CoinGecko API for coins not listed on Binance (e.g. JUNO)
  */
 
 // Coin ID → Binance trading pair mapping
@@ -16,10 +17,16 @@ const COIN_SYMBOL_MAP = {
   'secret':       'SCRTUSDT',
 };
 
-// Coins NOT available on Binance (no candlestick charts)
-const UNSUPPORTED_COINS = ['juno-network', 'stargaze', 'akash-network'];
+// Coins that use CoinGecko instead of Binance
+// coin ID here must match CoinGecko's coin ID
+const COINGECKO_COINS = {
+  'juno-network': 'juno-network',
+};
 
-// Period → optimal interval & limit (50-300 candles sweet spot)
+// Coins with no support at all
+const UNSUPPORTED_COINS = ['stargaze', 'akash-network'];
+
+// Period → optimal interval & limit for Binance (50-300 candles sweet spot)
 const PERIOD_CONFIG = {
   '4h':  { interval: '5m',  limit: 48  },
   '24h': { interval: '5m',  limit: 288 },
@@ -28,21 +35,69 @@ const PERIOD_CONFIG = {
   '90d': { interval: '1d',  limit: 90  },
 };
 
+// CoinGecko period → days param
+const COINGECKO_PERIOD_CONFIG = {
+  '7d':  { days: 7  },
+  '30d': { days: 30 },
+  '90d': { days: 90 },
+};
+
 /**
- * Fetch OHLC data from Binance
- * @param {string} coinId - e.g. "cosmos", "bitcoin"
+ * Fetch OHLC from CoinGecko (for JUNO and other non-Binance coins)
+ * Returns hourly candles — only supports 7d/30d/90d
+ */
+async function fetchOHLCFromCoinGecko(coinId, period) {
+  const config = COINGECKO_PERIOD_CONFIG[period];
+  if (!config) {
+    throw new Error(`Period "${period}" not supported for ${coinId}. Use 7d, 30d, or 90d.`);
+  }
+
+  const url = `https://api.coingecko.com/api/v3/coins/${coinId}/ohlc?vs_currency=usd&days=${config.days}`;
+  console.log(`[CoinGecko] Fetching ${coinId} ${period} → ${url}`);
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`CoinGecko API error ${response.status}: ${text}`);
+  }
+
+  const raw = await response.json();
+
+  // CoinGecko returns: [timestamp, open, high, low, close]  (no volume)
+  const candles = raw.map(k => ({
+    time:   Math.floor(k[0] / 1000),
+    open:   parseFloat(k[1]),
+    high:   parseFloat(k[2]),
+    low:    parseFloat(k[3]),
+    close:  parseFloat(k[4]),
+    volume: 0, // CoinGecko OHLC endpoint doesn't provide volume
+  }));
+
+  console.log(`[CoinGecko] Got ${candles.length} candles for ${coinId} ${period}`);
+  return candles;
+}
+
+/**
+ * Fetch OHLC data — routes to Binance or CoinGecko based on coin
+ * @param {string} coinId - e.g. "cosmos", "juno-network"
  * @param {string} period - e.g. "7d", "30d"
  * @returns {Promise<Array>} Array of OHLC candle objects
  */
 async function fetchOHLC(coinId, period) {
-  // Check if coin is supported
+  // Unsupported coins
   if (UNSUPPORTED_COINS.includes(coinId)) {
-    throw new Error(`Coin "${coinId}" is not available on Binance. No candlestick charts possible.`);
+    throw new Error(`Coin "${coinId}" is not available. No chart data source found.`);
   }
 
+  // CoinGecko coins (JUNO etc.)
+  if (COINGECKO_COINS[coinId]) {
+    return fetchOHLCFromCoinGecko(COINGECKO_COINS[coinId], period);
+  }
+
+  // Binance coins
   const symbol = COIN_SYMBOL_MAP[coinId];
   if (!symbol) {
-    throw new Error(`Unknown coin: "${coinId}". Supported: ${Object.keys(COIN_SYMBOL_MAP).join(', ')}`);
+    throw new Error(`Unknown coin: "${coinId}".`);
   }
 
   const config = PERIOD_CONFIG[period];
@@ -61,10 +116,8 @@ async function fetchOHLC(coinId, period) {
 
   const raw = await response.json();
 
-  // Parse Binance kline format into clean OHLC objects
-  // Binance returns: [openTime, open, high, low, close, volume, closeTime, ...]
   const candles = raw.map(k => ({
-    time:   Math.floor(k[0] / 1000), // Convert ms → seconds (TradingView format)
+    time:   Math.floor(k[0] / 1000),
     open:   parseFloat(k[1]),
     high:   parseFloat(k[2]),
     low:    parseFloat(k[3]),
@@ -76,4 +129,4 @@ async function fetchOHLC(coinId, period) {
   return candles;
 }
 
-module.exports = { fetchOHLC, COIN_SYMBOL_MAP, PERIOD_CONFIG, UNSUPPORTED_COINS };
+module.exports = { fetchOHLC, COIN_SYMBOL_MAP, COINGECKO_COINS, PERIOD_CONFIG, UNSUPPORTED_COINS };

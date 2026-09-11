@@ -75,6 +75,12 @@ app.post('/chart', async (req, res) => {
       return res.status(400).json({ error: `Invalid period. Must be one of: ${validPeriods.join(', ')}` });
     }
 
+    // CoinGecko coins only support 7d/30d/90d
+    const { COINGECKO_COINS } = require('./binance');
+    if (COINGECKO_COINS[coin] && !['7d', '30d', '90d'].includes(period)) {
+      return res.status(400).json({ error: `${coin} only supports 7d, 30d, 90d charts (data source limitation).` });
+    }
+
     // Use provided indicators or fall back to period defaults
     const indicators = Array.isArray(reqIndicators) ? reqIndicators : getDefaultIndicators(period);
 
