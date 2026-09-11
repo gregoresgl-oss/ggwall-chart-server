@@ -14,6 +14,8 @@ const express = require('express');
 const { fetchOHLC, COIN_SYMBOL_MAP } = require('./binance');
 const { calculateAll } = require('./indicators');
 const { renderChart } = require('./chart-renderer');
+const { fetchPrices } = require('./coingecko');
+const { renderPrices } = require('./prices-renderer');
 
 const app = express();
 app.use(express.json());
@@ -116,6 +118,27 @@ app.post('/chart', async (req, res) => {
     }
 
     res.status(500).json({ error: err.message || 'Internal server error' });
+  }
+});
+
+// ────────────────────────────────────────────────────────────
+// GET /prices - Generate prices panel PNG
+// ────────────────────────────────────────────────────────────
+app.get('/prices', async (req, res) => {
+  const startTime = Date.now();
+  try {
+    console.log('\n[/prices] Request received');
+    const coins = await fetchPrices();
+    const pngBuffer = await renderPrices(coins);
+
+    res.set('Content-Type', 'image/png');
+    res.set('X-Render-Time', `${Date.now() - startTime}ms`);
+    res.send(pngBuffer);
+
+    console.log(`[/prices] Done in ${Date.now() - startTime}ms`);
+  } catch (err) {
+    console.error('[/prices] Error:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
