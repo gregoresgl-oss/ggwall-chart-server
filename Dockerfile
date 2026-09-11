@@ -39,6 +39,8 @@ COPY server.js ./
 COPY binance.js ./
 COPY indicators.js ./
 COPY chart-renderer.js ./
+COPY coingecko.js ./
+COPY prices-renderer.js ./
 
 # Railway injects PORT env var automatically
 EXPOSE 3000
