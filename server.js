@@ -122,6 +122,18 @@ app.post('/chart', async (req, res) => {
 });
 
 // ────────────────────────────────────────────────────────────
+// GET /prices/text - Generate prices as text (JSON)
+// ────────────────────────────────────────────────────────────
+app.get('/prices/text', async (req, res) => {
+  try {
+    const coins = await fetchPrices();
+    res.json({ coins, timestamp: new Date().toISOString() });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ────────────────────────────────────────────────────────────
 // GET /prices - Generate prices panel PNG
 // ────────────────────────────────────────────────────────────
 app.get('/prices', async (req, res) => {

@@ -37,7 +37,7 @@ const COIN_META = {
  */
 async function fetchPrices() {
   const ids = COINGECKO_IDS.join(',');
-  const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&price_change_percentage=24h,7d&sparkline=false`;
+  const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&price_change_percentage=24h,7d&sparkline=true`;
 
   console.log('[CoinGecko] Fetching prices...');
   const response = await fetch(url);
@@ -60,7 +60,8 @@ async function fetchPrices() {
     high24h:     c.high_24h,
     low24h:      c.low_24h,
     marketCap:   c.market_cap,
-    volume24h:   c.total_volume,
+    image:      c.image,
+    sparkline:  c.sparkline_in_7d?.price || [],
   }));
 
   console.log(`[CoinGecko] Got prices for ${coins.length} coins`);
