@@ -39,7 +39,7 @@ async function fetchPrices() {
   const [raw1, raw2] = await Promise.all([res1.json(), res2.json()]);
 
   // Build volume + ATH map from second call
-  const extraData: Record<string, any> = {};
+  const extraData = {};
   for (const c of raw2) {
     extraData[c.id] = {
       volume24h: c.total_volume,
