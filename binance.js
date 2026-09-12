@@ -6,15 +6,14 @@
 
 // Coin ID → Binance trading pair mapping
 const COIN_SYMBOL_MAP = {
-  'cosmos':       'ATOMUSDT',
-  'osmosis':      'OSMOUSDT',
-  'saga-2':       'SAGAUSDT',
-  'dymension':    'DYMUSDT',
-  'cardano':      'ADAUSDT',
-  'celestia':     'TIAUSDT',
-  'bitcoin':      'BTCUSDT',
-  'ethereum':     'ETHUSDT',
-  'secret':       'SCRTUSDT',
+  'cosmos':    'ATOMUSDT',
+  'osmosis':   'OSMOUSDT',
+  'saga-2':    'SAGAUSDT',
+  'dymension': 'DYMUSDT',
+  'cardano':   'ADAUSDT',
+  'celestia':  'TIAUSDT',
+  'bitcoin':   'BTCUSDT',
+  'ethereum':  'ETHUSDT',
 };
 
 // Coins that use CoinGecko instead of Binance

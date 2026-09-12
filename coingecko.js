@@ -6,7 +6,7 @@
 
 const COINGECKO_IDS = [
   'bitcoin', 'ethereum', 'cardano', 'cosmos', 'osmosis',
-  'celestia', 'saga-2', 'dymension', 'secret', 'juno-network',
+  'celestia', 'saga-2', 'dymension', 'juno-network',
 ];
 
 const COIN_META = {
@@ -18,7 +18,6 @@ const COIN_META = {
   'celestia':     { symbol: 'TIA',  emoji: '✨', group: 'cosmos' },
   'saga-2':       { symbol: 'SAGA', emoji: '⭐', group: 'cosmos' },
   'dymension':    { symbol: 'DYM',  emoji: '💫', group: 'cosmos' },
-  'secret':       { symbol: 'SCRT', emoji: '🔒', group: 'cosmos' },
   'juno-network': { symbol: 'JUNO', emoji: '🟣', group: 'cosmos' },
 };
 
