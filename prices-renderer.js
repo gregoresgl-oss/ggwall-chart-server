@@ -253,12 +253,12 @@ function buildPricesHTML(coins, timestamp) {
   <div id="header-time">🕐 ${timestamp} UTC</div>
 </div>
 
-<div class="group-header">🌍 Major</div>
+<div class="group-header">— MAJOR</div>
 ${majorCoins.map(renderCoinRow).join('')}
 
 <div class="group-divider"></div>
 
-<div class="group-header">⚛️ Cosmos Ecosystem</div>
+<div class="group-header">— COSMOS ECOSYSTEM</div>
 ${cosmosCoins.map(renderCoinRow).join('')}
 
 <div id="footer">
