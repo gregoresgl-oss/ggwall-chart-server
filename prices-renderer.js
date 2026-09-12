@@ -48,6 +48,15 @@ function formatLarge(n) {
   return '$' + n.toLocaleString();
 }
 
+// Format circulating supply
+function formatSupply(supply, symbol) {
+  if (!supply) return 'N/A';
+  if (supply >= 1e9)  return (supply / 1e9).toFixed(2) + 'B ' + symbol;
+  if (supply >= 1e6)  return (supply / 1e6).toFixed(2) + 'M ' + symbol;
+  if (supply >= 1e3)  return (supply / 1e3).toFixed(2) + 'K ' + symbol;
+  return supply.toFixed(0) + ' ' + symbol;
+}
+
 // Format % change
 function formatChange(pct) {
   if (pct == null) return { text: 'N/A', color: COLORS.text, arrow: '' };
@@ -115,7 +124,10 @@ function buildPricesHTML(coins, timestamp) {
         <span class="meta-item">Vol: <b>${formatLarge(coin.volume24h)}</b></span>
         <span class="meta-item">H: <b style="color:${COLORS.green}">${formatPrice(coin.high24h)}</b></span>
         <span class="meta-item">L: <b style="color:${COLORS.red}">${formatPrice(coin.low24h)}</b></span>
-        <span class="meta-item">ATH: <b style="color:${COLORS.red}">${coin.athChange ? coin.athChange.toFixed(1) + '%' : 'N/A'}</b></span>
+      </div>
+      <div class="row-meta">
+        <span class="meta-item">ATH: <b>${formatPrice(coin.ath)}</b> <span style="color:${COLORS.red}">(${coin.athChange ? coin.athChange.toFixed(1) + '%' : 'N/A'})</span></span>
+        <span class="meta-item">Supply: <b>${formatSupply(coin.circulatingSupply, coin.symbol)}</b></span>
       </div>
     </div>`;
   }

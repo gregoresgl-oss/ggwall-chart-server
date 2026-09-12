@@ -45,9 +45,10 @@ async function fetchPrices() {
   const extraData = {};
   for (const c of raw2) {
     extraData[c.id] = {
-      volume24h: c.total_volume,
-      ath:       c.ath,
-      athChange: c.ath_change_percentage,
+      volume24h:        c.total_volume,
+      ath:              c.ath,
+      athChange:        c.ath_change_percentage,
+      circulatingSupply: c.circulating_supply,
     };
   }
 
@@ -63,9 +64,10 @@ async function fetchPrices() {
     high24h:   c.high_24h,
     low24h:    c.low_24h,
     marketCap: c.market_cap,
-    volume24h: extraData[c.id]?.volume24h || 0,
-    ath:       extraData[c.id]?.ath || 0,
-    athChange: extraData[c.id]?.athChange || 0,
+    volume24h:         extraData[c.id]?.volume24h || 0,
+    ath:               extraData[c.id]?.ath || 0,
+    athChange:         extraData[c.id]?.athChange || 0,
+    circulatingSupply: extraData[c.id]?.circulatingSupply || 0,
     image:     c.image,
     sparkline: c.sparkline_in_7d?.price || [],
   }));
