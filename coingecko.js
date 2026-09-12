@@ -32,9 +32,12 @@ async function fetchPrices() {
   const url2 = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&price_change_percentage=24h,7d&sparkline=false`;
 
   console.log('[CoinGecko] Fetching prices (2 calls)...');
-  const [res1, res2] = await Promise.all([fetch(url1), fetch(url2)]);
+  const res1 = await fetch(url1);
+  await new Promise(resolve => setTimeout(resolve, 1000)); // 1s delay to avoid rate limit
+  const res2 = await fetch(url2);
 
-  if (!res1.ok || !res2.ok) throw new Error(`CoinGecko API error`);
+  if (!res1.ok) throw new Error(`CoinGecko API error ${res1.status}`);
+  if (!res2.ok) throw new Error(`CoinGecko API error ${res2.status}`);
 
   const [raw1, raw2] = await Promise.all([res1.json(), res2.json()]);
 
