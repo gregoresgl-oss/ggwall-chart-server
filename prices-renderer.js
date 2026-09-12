@@ -115,6 +115,7 @@ function buildPricesHTML(coins, timestamp) {
         <span class="meta-item">Vol: <b>${formatLarge(coin.volume24h)}</b></span>
         <span class="meta-item">H: <b style="color:${COLORS.green}">${formatPrice(coin.high24h)}</b></span>
         <span class="meta-item">L: <b style="color:${COLORS.red}">${formatPrice(coin.low24h)}</b></span>
+        <span class="meta-item">ATH: <b style="color:${COLORS.red}">${coin.athChange ? coin.athChange.toFixed(1) + '%' : 'N/A'}</b></span>
       </div>
     </div>`;
   }
@@ -249,16 +250,16 @@ function buildPricesHTML(coins, timestamp) {
 <body>
 
 <div id="header">
-  <div id="header-title">💰 GGWALL Prices</div>
-  <div id="header-time">🕐 ${timestamp} UTC</div>
+  <div id="header-title">GGWALL Prices</div>
+  <div id="header-time">${timestamp} UTC</div>
 </div>
 
-<div class="group-header">— MAJOR</div>
+<div class="group-header">MAJOR</div>
 ${majorCoins.map(renderCoinRow).join('')}
 
 <div class="group-divider"></div>
 
-<div class="group-header">— COSMOS ECOSYSTEM</div>
+<div class="group-header">COSMOS ECOSYSTEM</div>
 ${cosmosCoins.map(renderCoinRow).join('')}
 
 <div id="footer">
