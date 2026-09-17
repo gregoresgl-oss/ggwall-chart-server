@@ -2,7 +2,33 @@
  * binance.js
  * Fetches OHLC candlestick data from Binance API (free, no API key needed)
  * Falls back to CoinGecko API for coins not listed on Binance (e.g. JUNO)
+ * Includes 5-minute cache to avoid Binance rate limiting / IP bans
  */
+
+// ── Cache ─────────────────────────────────────────────────
+// Key: "coinId:period" → { data, expiresAt }
+const cache = new Map();
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+function getCached(coinId, period) {
+  const key = `${coinId}:${period}`;
+  const entry = cache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    cache.delete(key);
+    return null;
+  }
+  console.log(`[Cache] HIT ${key} (expires in ${Math.round((entry.expiresAt - Date.now()) / 1000)}s)`);
+  return entry.data;
+}
+
+function setCache(coinId, period, data) {
+  const key = `${coinId}:${period}`;
+  cache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
+  console.log(`[Cache] SET ${key} (TTL: ${CACHE_TTL_MS / 1000}s)`);
+}
+
+// ─────────────────────────────────────────────────────────
 
 // Coin ID → Binance trading pair mapping
 const COIN_SYMBOL_MAP = {
@@ -73,6 +99,7 @@ async function fetchOHLCFromCoinGecko(coinId, period) {
   }));
 
   console.log(`[CoinGecko] Got ${candles.length} candles for ${coinId} ${period}`);
+  setCache(coinId, period, candles);
   return candles;
 }
 
@@ -83,6 +110,10 @@ async function fetchOHLCFromCoinGecko(coinId, period) {
  * @returns {Promise<Array>} Array of OHLC candle objects
  */
 async function fetchOHLC(coinId, period) {
+  // Check cache first
+  const cached = getCached(coinId, period);
+  if (cached) return cached;
+
   // Unsupported coins
   if (UNSUPPORTED_COINS.includes(coinId)) {
     throw new Error(`Coin "${coinId}" is not available. No chart data source found.`);
@@ -125,6 +156,7 @@ async function fetchOHLC(coinId, period) {
   }));
 
   console.log(`[Binance] Got ${candles.length} candles for ${symbol} ${period}`);
+  setCache(coinId, period, candles);
   return candles;
 }
 
